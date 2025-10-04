@@ -1,0 +1,33 @@
+graph TD
+    subgraph Data Sources
+        A[WebSocket Feed] --> B{Market Data Processor}
+        C[REST API] --> B
+    end
+
+    subgraph Analysis Engine
+        B --> D[Order Book Analyzer]
+        B --> E[Tape Reader]
+        
+        D --> F{Metrics Calculator}
+        E --> F
+        
+        F --> G[Bid-Ask Spread]
+        F --> H[Order Imbalance]
+        F --> I[Volume Profile]
+    end
+
+    subgraph Pattern Detection
+        F --> J{Pattern Detector}
+        J --> K[Iceberg Orders]
+        J --> L[Spoofing]
+        J --> M[Support/Resistance]
+    end
+
+    subgraph Output
+        K --> N[Visualization]
+        L --> N
+        M --> N
+        G --> N
+        H --> N
+        I --> N
+    end

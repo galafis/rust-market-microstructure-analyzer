@@ -13,6 +13,9 @@ Uma engine de análise de microestrutura de mercado para processar e analisar da
 - **Tape Reading:** Análise do fluxo de negócios fechados.
 - **Detecção de Padrões:** Identificação de ordens iceberg, spoofing, etc.
 
+### Arquitetura
+![Arquitetura do Market Microstructure Analyzer](docs/architecture.png)
+
 ---
 
 ## 🇺🇸 Overview (English)
@@ -23,6 +26,9 @@ A market microstructure analysis engine to process and analyze order book (Level
 - **Order Book Analysis:** Processing of market depth data.
 - **Tape Reading:** Analysis of the executed trade flow.
 - **Pattern Detection:** Identification of iceberg orders, spoofing, etc.
+
+### Architecture
+![Market Microstructure Analyzer Architecture](docs/architecture.png)
 
 ---
 
