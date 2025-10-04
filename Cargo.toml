@@ -5,7 +5,7 @@ edition = "2021"
 authors = ["Gabriel Demetrios Lafis"]
 description = "Market microstructure analytics engine with order flow and tape reading"
 license = "MIT"
-repository = "https://github.com/GabrielDemetrius/rust-market-microstructure-analyzer"
+repository = "https://github.com/galafis/rust-market-microstructure-analyzer"
 keywords = ["trading", "market-microstructure", "orderbook", "analytics", "hft"]
 categories = ["finance", "algorithms"]
 

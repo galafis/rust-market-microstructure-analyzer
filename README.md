@@ -1,6 +1,6 @@
 # Market Microstructure Analyzer em Rust
 
-![Build Status](https://img.shields.io/github/actions/workflow/status/GabrielDemetrius/rust-market-microstructure-analyzer/rust.yml?branch=main&style=for-the-badge) ![License](https://img.shields.io/github/license/GabrielDemetrius/rust-market-microstructure-analyzer?style=for-the-badge)
+![Build Status](https://img.shields.io/github/actions/workflow/status/galafis/rust-market-microstructure-analyzer/rust.yml?branch=main&style=for-the-badge) ![License](https://img.shields.io/github/license/galafis/rust-market-microstructure-analyzer?style=for-the-badge)
 
 ---
 
@@ -29,7 +29,7 @@ A market microstructure analysis engine to process and analyze order book (Level
 ## 🚀 Getting Started
 
 ```sh
-git clone https://github.com/GabrielDemetrius/rust-market-microstructure-analyzer.git
+git clone https://github.com/galafis/rust-market-microstructure-analyzer.git
 cd rust-market-microstructure-analyzer
 cargo build --release
 cargo run --release
