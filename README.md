@@ -4,7 +4,8 @@
 
 ![Rust](https://img.shields.io/badge/Rust-1.70+-orange?style=for-the-badge&logo=rust)
 ![License](https://img.shields.io/github/license/galafis/rust-market-microstructure-analyzer?style=for-the-badge)
-
+![Build Status](https://img.shields.io/github/actions/workflow/status/galafis/rust-market-microstructure-analyzer/ci.yml?branch=main&style=for-the-badge)
+![Tests](https://img.shields.io/badge/tests-24%20passing-brightgreen?style=for-the-badge)
 ![Stars](https://img.shields.io/github/stars/galafis/rust-market-microstructure-analyzer?style=for-the-badge)
 
 **Engine de análise de microestrutura de mercado para order flow e tape reading em tempo real**
@@ -27,7 +28,9 @@
 - [Uso](#-uso)
 - [Exemplos](#-exemplos)
 - [Conceitos](#-conceitos)
+- [Testes](#-testes)
 - [Performance](#-performance)
+- [Contribuindo](#-contribuindo)
 - [Roadmap](#-roadmap)
 - [Licença](#-licença)
 - [Autor](#-autor)
@@ -167,6 +170,7 @@ cargo run --release --example orderbook_analysis
 ```rust
 use market_microstructure_analyzer::*;
 use rust_decimal_macros::dec;
+use anyhow::Result;
 
 fn main() -> Result<()> {
     // Criar order book
@@ -183,24 +187,14 @@ fn main() -> Result<()> {
     };
 
     // Calcular spread
-    let best_bid = &orderbook.bids[0].price;
-    let best_ask = &orderbook.asks[0].price;
-    let spread = best_ask - best_bid;
-    
-    println!("Spread: ${}", spread);
+    use market_microstructure_analyzer::orderbook;
+    if let Some((spread, spread_pct)) = orderbook::calculate_spread(&orderbook) {
+        println!("Spread: ${} ({:.4}%)", spread, spread_pct);
+    }
     
     // Calcular imbalance
-    let total_bid_volume: Decimal = orderbook.bids.iter()
-        .map(|l| l.quantity)
-        .sum();
-    let total_ask_volume: Decimal = orderbook.asks.iter()
-        .map(|l| l.quantity)
-        .sum();
-    
-    let imbalance = (total_bid_volume - total_ask_volume) 
-        / (total_bid_volume + total_ask_volume);
-    
-    println!("Order Imbalance: {}", imbalance);
+    let imbalance = orderbook::calculate_imbalance(&orderbook, None);
+    println!("Order Imbalance: {:.4}", imbalance);
     
     Ok(())
 }
@@ -300,11 +294,97 @@ Mede o desequilíbrio entre compradores e vendedores:
 
 ---
 
+## 🧪 Testes
+
+Este projeto possui uma cobertura de testes abrangente com **24 testes unitários** validando toda a funcionalidade core.
+
+### Executar Testes
+
+```bash
+# Executar todos os testes
+cargo test
+
+# Executar testes com saída detalhada
+cargo test -- --nocapture
+
+# Executar testes de um módulo específico
+cargo test orderbook::tests
+
+# Executar testes em modo release
+cargo test --release
+```
+
+### Estrutura de Testes
+
+```
+tests/
+├── orderbook::tests (7 testes)
+│   ├── Cálculo de spread
+│   ├── Cálculo de imbalance
+│   ├── Best bid/ask prices
+│   └── Volume calculations
+├── metrics::tests (4 testes)
+│   ├── Delta volume
+│   ├── CVD (Cumulative Volume Delta)
+│   ├── Volume profile
+│   └── Weighted mid price
+├── patterns::tests (4 testes)
+│   ├── Iceberg order detection
+│   ├── Spoofing detection
+│   ├── Support/resistance
+│   └── Absorption detection
+├── tape::tests (7 testes)
+│   ├── Trade classification
+│   ├── Trade pressure calculation
+│   ├── Block trade identification
+│   ├── Aggression ratio
+│   ├── VWAP calculation
+│   └── Trade cluster detection
+└── visualization::tests (2 testes)
+    ├── ASCII depth chart
+    └── Empty order book handling
+```
+
+### CI/CD
+
+O projeto utiliza GitHub Actions para integração contínua:
+- ✅ Execução automática de testes
+- ✅ Verificação de build
+- ✅ Linting com Clippy
+- ✅ Formatação com Rustfmt
+
+---
+
+## 🤝 Contribuindo
+
+Contribuições são bem-vindas! Para contribuir:
+
+1. **Fork** o projeto
+2. Crie uma **branch** para sua feature (`git checkout -b feature/MinhaFeature`)
+3. **Commit** suas mudanças (`git commit -m 'Adiciona MinhaFeature'`)
+4. **Push** para a branch (`git push origin feature/MinhaFeature`)
+5. Abra um **Pull Request**
+
+### Guidelines
+
+- Escreva testes para novas funcionalidades
+- Mantenha a cobertura de testes alta
+- Siga o estilo de código Rust (use `cargo fmt`)
+- Garanta que `cargo clippy` não retorne warnings
+- Documente código complexo com comentários
+
+---
+
 ## 🗺️ Roadmap
 
 - [x] Análise básica de order book
 - [x] Cálculo de spread e imbalance
 - [x] Tape reading básico
+- [x] **Testes unitários completos (24 testes)**
+- [x] **CI/CD com GitHub Actions**
+- [x] **Detecção de padrões (iceberg, spoofing, support/resistance)**
+- [x] **Métricas avançadas (CVD, delta, volume profile, VWAP)**
+- [x] **Visualização ASCII de order book**
 - [ ] WebSocket feed em tempo real
 - [ ] Machine Learning para detecção de padrões
 - [ ] Dashboard web interativo
