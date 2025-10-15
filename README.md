@@ -109,11 +109,42 @@ Market microstructure is the study of how orders are executed and how prices are
 
 O sistema é composto por 5 módulos principais:
 
-1. **OrderBook Module** - Gerenciamento e análise de order book
-2. **Tape Module** - Processamento de tape reading
-3. **Metrics Module** - Cálculo de métricas avançadas
-4. **Patterns Module** - Detecção de padrões
-5. **Visualization Module** - Geração de gráficos e heatmaps
+1. **OrderBook Module** (`src/orderbook/`) - Gerenciamento e análise de order book
+   - Cálculo de spread bid-ask
+   - Detecção de imbalance
+   - Análise de profundidade de mercado
+   - Best bid/ask e mid price
+   - ✅ **7 testes implementados**
+
+2. **Tape Module** (`src/tape/`) - Processamento de tape reading
+   - Análise de fluxo de trades
+   - Identificação de block trades
+   - Cálculo de VWAP
+   - Detecção de clusters de trading
+   - Ratio de agressão
+   - ✅ **7 testes implementados**
+
+3. **Metrics Module** (`src/metrics/`) - Cálculo de métricas avançadas
+   - Volume Profile (POC, VAH, VAL)
+   - Delta Volume
+   - Cumulative Volume Delta (CVD)
+   - Weighted mid price
+   - ✅ **4 testes implementados**
+
+4. **Patterns Module** (`src/patterns/`) - Detecção de padrões
+   - Iceberg orders (ordens ocultas)
+   - Spoofing (ordens falsas)
+   - Support/Resistance levels
+   - Absorption (absorção de liquidez)
+   - ✅ **4 testes implementados**
+
+5. **Visualization Module** (`src/visualization/`) - Geração de visualizações
+   - Gráficos ASCII de profundidade
+   - Print formatado de order book
+   - Display de tape reading
+   - ✅ **2 testes implementados**
+
+**Total: 24 testes unitários cobrindo toda a funcionalidade core** ✅
 
 ---
 
@@ -155,6 +186,20 @@ cargo test
 
 ## 🚀 Uso
 
+### Quick Start
+
+Execute o demo principal para ver todas as funcionalidades:
+
+```bash
+# Clone e compile
+git clone https://github.com/galafis/rust-market-microstructure-analyzer.git
+cd rust-market-microstructure-analyzer
+cargo build --release
+
+# Execute o demo
+cargo run --release
+```
+
 ### Execução Básica
 
 ```bash
@@ -163,6 +208,26 @@ cargo run --release
 
 # Executar exemplo específico
 cargo run --release --example orderbook_analysis
+cargo run --release --example pattern_detection
+cargo run --release --example tape_reading
+```
+
+### Como Usar em Seu Projeto
+
+Adicione ao seu `Cargo.toml`:
+
+```toml
+[dependencies]
+market-microstructure-analyzer = { git = "https://github.com/galafis/rust-market-microstructure-analyzer" }
+rust_decimal = "1.36"
+rust_decimal_macros = "1.36"
+```
+
+Importe no seu código:
+
+```rust
+use market_microstructure_analyzer::*;
+use rust_decimal_macros::dec;
 ```
 
 ### Exemplo de Código
@@ -207,11 +272,15 @@ fn main() -> Result<()> {
 O diretório `examples/` contém exemplos práticos:
 
 - [`orderbook_analysis.rs`](examples/orderbook_analysis.rs) - Análise completa de order book
+- [`pattern_detection.rs`](examples/pattern_detection.rs) - Detecção de padrões (iceberg, spoofing, absorption)
+- [`tape_reading.rs`](examples/tape_reading.rs) - Análise de tape reading e métricas avançadas
 
 Para executar um exemplo:
 
 ```bash
 cargo run --release --example orderbook_analysis
+cargo run --release --example pattern_detection
+cargo run --release --example tape_reading
 ```
 
 **Saída esperada:**
@@ -241,6 +310,8 @@ cargo run --release --example orderbook_analysis
 ---
 
 ## 📖 Conceitos
+
+Para documentação completa da API, veja [docs/API.md](docs/API.md).
 
 ### Order Book (Livro de Ofertas)
 
