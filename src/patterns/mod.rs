@@ -48,10 +48,7 @@ pub fn detect_iceberg_orders(
     // Group trades by similar price
     for trade in trades {
         let price_level = (trade.price / price_tolerance).round() * price_tolerance;
-        price_fills
-            .entry(price_level)
-            .or_default()
-            .push(trade);
+        price_fills.entry(price_level).or_default().push(trade);
     }
 
     // Check for repeated fills at same price

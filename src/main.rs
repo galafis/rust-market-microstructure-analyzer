@@ -67,14 +67,14 @@ async fn main() -> Result<()> {
     // Display order book
     println!("📊 Order Book Analysis:");
     println!("─────────────────────────────────────────────────\n");
-    
+
     if let Some((spread, spread_pct)) = orderbook::calculate_spread(&orderbook) {
         println!("  💰 Spread: ${} ({:.4}%)", spread, spread_pct);
     }
-    
+
     let imbalance = orderbook::calculate_imbalance(&orderbook, None);
     println!("  ⚖️  Imbalance: {:.4}", imbalance);
-    
+
     if imbalance > dec!(0) {
         println!("     → More buying pressure (bullish)");
     } else if imbalance < dec!(0) {
@@ -82,32 +82,40 @@ async fn main() -> Result<()> {
     } else {
         println!("     → Market balanced");
     }
-    
+
     if let Some(mid) = orderbook::mid_price(&orderbook) {
         println!("  📍 Mid Price: ${}", mid);
     }
 
     println!("\n📈 Tape Analysis:");
     println!("─────────────────────────────────────────────────\n");
-    
+
     let (buy_vol, sell_vol, net_vol) = tape::calculate_trade_pressure(&trades);
     println!("  🟢 Buy Volume: {}", buy_vol);
     println!("  🔴 Sell Volume: {}", sell_vol);
-    println!("  📊 Net Volume: {} ({})", 
+    println!(
+        "  📊 Net Volume: {} ({})",
         net_vol,
-        if net_vol > dec!(0) { "bullish" } else { "bearish" }
+        if net_vol > dec!(0) {
+            "bullish"
+        } else {
+            "bearish"
+        }
     );
-    
+
     if let Some(vwap) = tape::calculate_vwap(&trades) {
         println!("  📌 VWAP: ${:.2}", vwap);
     }
 
     println!("\n🔍 Pattern Detection:");
     println!("─────────────────────────────────────────────────\n");
-    
+
     let support_resistance = patterns::detect_support_resistance(&orderbook, dec!(1.0));
-    println!("  Found {} support/resistance levels", support_resistance.len());
-    
+    println!(
+        "  Found {} support/resistance levels",
+        support_resistance.len()
+    );
+
     for pattern in &support_resistance {
         match pattern {
             patterns::Pattern::Support { price, strength } => {
@@ -122,6 +130,6 @@ async fn main() -> Result<()> {
 
     println!("\n✅ Analysis Complete!");
     println!("\n💡 Tip: Run 'cargo run --example orderbook_analysis' for more examples");
-    
+
     Ok(())
 }
