@@ -8,14 +8,32 @@ fn main() -> Result<()> {
     // Create sample order book
     let orderbook = OrderBook {
         bids: vec![
-            Level { price: dec!(50000.00), quantity: dec!(1.5) },
-            Level { price: dec!(49999.50), quantity: dec!(2.3) },
-            Level { price: dec!(49999.00), quantity: dec!(0.8) },
+            Level {
+                price: dec!(50000.00),
+                quantity: dec!(1.5),
+            },
+            Level {
+                price: dec!(49999.50),
+                quantity: dec!(2.3),
+            },
+            Level {
+                price: dec!(49999.00),
+                quantity: dec!(0.8),
+            },
         ],
         asks: vec![
-            Level { price: dec!(50001.00), quantity: dec!(1.2) },
-            Level { price: dec!(50001.50), quantity: dec!(1.8) },
-            Level { price: dec!(50002.00), quantity: dec!(2.5) },
+            Level {
+                price: dec!(50001.00),
+                quantity: dec!(1.2),
+            },
+            Level {
+                price: dec!(50001.50),
+                quantity: dec!(1.8),
+            },
+            Level {
+                price: dec!(50002.00),
+                quantity: dec!(2.5),
+            },
         ],
         timestamp: 1696435200,
     };

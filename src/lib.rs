@@ -1,9 +1,9 @@
 //! Market Microstructure Analytics Engine
-pub mod orderbook;
-pub mod tape;
 pub mod metrics;
+pub mod orderbook;
 pub mod patterns;
-pub mod visualization;
+pub mod tape;
 pub mod types;
+pub mod visualization;
 
-pub use types::{OrderBook, Trade, Level};
+pub use types::{Level, OrderBook, Trade};

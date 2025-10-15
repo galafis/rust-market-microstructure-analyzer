@@ -4,13 +4,20 @@
 
 ![Rust](https://img.shields.io/badge/Rust-1.70+-orange?style=for-the-badge&logo=rust)
 ![License](https://img.shields.io/github/license/galafis/rust-market-microstructure-analyzer?style=for-the-badge)
-
+![Build Status](https://img.shields.io/github/actions/workflow/status/galafis/rust-market-microstructure-analyzer/ci.yml?branch=main&style=for-the-badge)
+![Tests](https://img.shields.io/badge/tests-24%20passing-brightgreen?style=for-the-badge)
 ![Stars](https://img.shields.io/github/stars/galafis/rust-market-microstructure-analyzer?style=for-the-badge)
 
 **Engine de análise de microestrutura de mercado para order flow e tape reading em tempo real**
 
+✅ **Totalmente testado** - 24 testes unitários  
+✅ **100% funcional** - Todos os módulos implementados  
+✅ **CI/CD configurado** - GitHub Actions  
+✅ **Documentação completa** - API, exemplos, e guias
+
 [Documentação](https://github.com/galafis/rust-market-microstructure-analyzer/tree/main/docs) •
 [Exemplos](https://github.com/galafis/rust-market-microstructure-analyzer/tree/main/examples) •
+[API Reference](https://github.com/galafis/rust-market-microstructure-analyzer/blob/main/docs/API.md) •
 [Reportar Bug](https://github.com/galafis/rust-market-microstructure-analyzer/issues)
 
 </div>
@@ -27,7 +34,9 @@
 - [Uso](#-uso)
 - [Exemplos](#-exemplos)
 - [Conceitos](#-conceitos)
+- [Testes](#-testes)
 - [Performance](#-performance)
+- [Contribuindo](#-contribuindo)
 - [Roadmap](#-roadmap)
 - [Licença](#-licença)
 - [Autor](#-autor)
@@ -106,11 +115,42 @@ Market microstructure is the study of how orders are executed and how prices are
 
 O sistema é composto por 5 módulos principais:
 
-1. **OrderBook Module** - Gerenciamento e análise de order book
-2. **Tape Module** - Processamento de tape reading
-3. **Metrics Module** - Cálculo de métricas avançadas
-4. **Patterns Module** - Detecção de padrões
-5. **Visualization Module** - Geração de gráficos e heatmaps
+1. **OrderBook Module** (`src/orderbook/`) - Gerenciamento e análise de order book
+   - Cálculo de spread bid-ask
+   - Detecção de imbalance
+   - Análise de profundidade de mercado
+   - Best bid/ask e mid price
+   - ✅ **7 testes implementados**
+
+2. **Tape Module** (`src/tape/`) - Processamento de tape reading
+   - Análise de fluxo de trades
+   - Identificação de block trades
+   - Cálculo de VWAP
+   - Detecção de clusters de trading
+   - Ratio de agressão
+   - ✅ **7 testes implementados**
+
+3. **Metrics Module** (`src/metrics/`) - Cálculo de métricas avançadas
+   - Volume Profile (POC, VAH, VAL)
+   - Delta Volume
+   - Cumulative Volume Delta (CVD)
+   - Weighted mid price
+   - ✅ **4 testes implementados**
+
+4. **Patterns Module** (`src/patterns/`) - Detecção de padrões
+   - Iceberg orders (ordens ocultas)
+   - Spoofing (ordens falsas)
+   - Support/Resistance levels
+   - Absorption (absorção de liquidez)
+   - ✅ **4 testes implementados**
+
+5. **Visualization Module** (`src/visualization/`) - Geração de visualizações
+   - Gráficos ASCII de profundidade
+   - Print formatado de order book
+   - Display de tape reading
+   - ✅ **2 testes implementados**
+
+**Total: 24 testes unitários cobrindo toda a funcionalidade core** ✅
 
 ---
 
@@ -152,6 +192,20 @@ cargo test
 
 ## 🚀 Uso
 
+### Quick Start
+
+Execute o demo principal para ver todas as funcionalidades:
+
+```bash
+# Clone e compile
+git clone https://github.com/galafis/rust-market-microstructure-analyzer.git
+cd rust-market-microstructure-analyzer
+cargo build --release
+
+# Execute o demo
+cargo run --release
+```
+
 ### Execução Básica
 
 ```bash
@@ -160,6 +214,26 @@ cargo run --release
 
 # Executar exemplo específico
 cargo run --release --example orderbook_analysis
+cargo run --release --example pattern_detection
+cargo run --release --example tape_reading
+```
+
+### Como Usar em Seu Projeto
+
+Adicione ao seu `Cargo.toml`:
+
+```toml
+[dependencies]
+market-microstructure-analyzer = { git = "https://github.com/galafis/rust-market-microstructure-analyzer" }
+rust_decimal = "1.36"
+rust_decimal_macros = "1.36"
+```
+
+Importe no seu código:
+
+```rust
+use market_microstructure_analyzer::*;
+use rust_decimal_macros::dec;
 ```
 
 ### Exemplo de Código
@@ -167,6 +241,7 @@ cargo run --release --example orderbook_analysis
 ```rust
 use market_microstructure_analyzer::*;
 use rust_decimal_macros::dec;
+use anyhow::Result;
 
 fn main() -> Result<()> {
     // Criar order book
@@ -183,24 +258,14 @@ fn main() -> Result<()> {
     };
 
     // Calcular spread
-    let best_bid = &orderbook.bids[0].price;
-    let best_ask = &orderbook.asks[0].price;
-    let spread = best_ask - best_bid;
-    
-    println!("Spread: ${}", spread);
+    use market_microstructure_analyzer::orderbook;
+    if let Some((spread, spread_pct)) = orderbook::calculate_spread(&orderbook) {
+        println!("Spread: ${} ({:.4}%)", spread, spread_pct);
+    }
     
     // Calcular imbalance
-    let total_bid_volume: Decimal = orderbook.bids.iter()
-        .map(|l| l.quantity)
-        .sum();
-    let total_ask_volume: Decimal = orderbook.asks.iter()
-        .map(|l| l.quantity)
-        .sum();
-    
-    let imbalance = (total_bid_volume - total_ask_volume) 
-        / (total_bid_volume + total_ask_volume);
-    
-    println!("Order Imbalance: {}", imbalance);
+    let imbalance = orderbook::calculate_imbalance(&orderbook, None);
+    println!("Order Imbalance: {:.4}", imbalance);
     
     Ok(())
 }
@@ -213,11 +278,15 @@ fn main() -> Result<()> {
 O diretório `examples/` contém exemplos práticos:
 
 - [`orderbook_analysis.rs`](examples/orderbook_analysis.rs) - Análise completa de order book
+- [`pattern_detection.rs`](examples/pattern_detection.rs) - Detecção de padrões (iceberg, spoofing, absorption)
+- [`tape_reading.rs`](examples/tape_reading.rs) - Análise de tape reading e métricas avançadas
 
 Para executar um exemplo:
 
 ```bash
 cargo run --release --example orderbook_analysis
+cargo run --release --example pattern_detection
+cargo run --release --example tape_reading
 ```
 
 **Saída esperada:**
@@ -247,6 +316,8 @@ cargo run --release --example orderbook_analysis
 ---
 
 ## 📖 Conceitos
+
+Para documentação completa da API, veja [docs/API.md](docs/API.md).
 
 ### Order Book (Livro de Ofertas)
 
@@ -300,11 +371,97 @@ Mede o desequilíbrio entre compradores e vendedores:
 
 ---
 
+## 🧪 Testes
+
+Este projeto possui uma cobertura de testes abrangente com **24 testes unitários** validando toda a funcionalidade core.
+
+### Executar Testes
+
+```bash
+# Executar todos os testes
+cargo test
+
+# Executar testes com saída detalhada
+cargo test -- --nocapture
+
+# Executar testes de um módulo específico
+cargo test orderbook::tests
+
+# Executar testes em modo release
+cargo test --release
+```
+
+### Estrutura de Testes
+
+```
+tests/
+├── orderbook::tests (7 testes)
+│   ├── Cálculo de spread
+│   ├── Cálculo de imbalance
+│   ├── Best bid/ask prices
+│   └── Volume calculations
+├── metrics::tests (4 testes)
+│   ├── Delta volume
+│   ├── CVD (Cumulative Volume Delta)
+│   ├── Volume profile
+│   └── Weighted mid price
+├── patterns::tests (4 testes)
+│   ├── Iceberg order detection
+│   ├── Spoofing detection
+│   ├── Support/resistance
+│   └── Absorption detection
+├── tape::tests (7 testes)
+│   ├── Trade classification
+│   ├── Trade pressure calculation
+│   ├── Block trade identification
+│   ├── Aggression ratio
+│   ├── VWAP calculation
+│   └── Trade cluster detection
+└── visualization::tests (2 testes)
+    ├── ASCII depth chart
+    └── Empty order book handling
+```
+
+### CI/CD
+
+O projeto utiliza GitHub Actions para integração contínua:
+- ✅ Execução automática de testes
+- ✅ Verificação de build
+- ✅ Linting com Clippy
+- ✅ Formatação com Rustfmt
+
+---
+
+## 🤝 Contribuindo
+
+Contribuições são bem-vindas! Para contribuir:
+
+1. **Fork** o projeto
+2. Crie uma **branch** para sua feature (`git checkout -b feature/MinhaFeature`)
+3. **Commit** suas mudanças (`git commit -m 'Adiciona MinhaFeature'`)
+4. **Push** para a branch (`git push origin feature/MinhaFeature`)
+5. Abra um **Pull Request**
+
+### Guidelines
+
+- Escreva testes para novas funcionalidades
+- Mantenha a cobertura de testes alta
+- Siga o estilo de código Rust (use `cargo fmt`)
+- Garanta que `cargo clippy` não retorne warnings
+- Documente código complexo com comentários
+
+---
+
 ## 🗺️ Roadmap
 
 - [x] Análise básica de order book
 - [x] Cálculo de spread e imbalance
 - [x] Tape reading básico
+- [x] **Testes unitários completos (24 testes)**
+- [x] **CI/CD com GitHub Actions**
+- [x] **Detecção de padrões (iceberg, spoofing, support/resistance)**
+- [x] **Métricas avançadas (CVD, delta, volume profile, VWAP)**
+- [x] **Visualização ASCII de order book**
 - [ ] WebSocket feed em tempo real
 - [ ] Machine Learning para detecção de padrões
 - [ ] Dashboard web interativo
