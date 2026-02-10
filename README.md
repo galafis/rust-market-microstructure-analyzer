@@ -4,8 +4,6 @@
 
 ![Rust](https://img.shields.io/badge/Rust-1.70+-orange?style=for-the-badge&logo=rust)
 ![License](https://img.shields.io/github/license/galafis/rust-market-microstructure-analyzer?style=for-the-badge)
-![Build Status](https://img.shields.io/github/actions/workflow/status/galafis/rust-market-microstructure-analyzer/ci.yml?branch=main&style=for-the-badge)
-![Tests](https://img.shields.io/badge/tests-24%20passing-brightgreen?style=for-the-badge)
 ![Stars](https://img.shields.io/github/stars/galafis/rust-market-microstructure-analyzer?style=for-the-badge)
 
 **Engine de análise de microestrutura de mercado para order flow e tape reading em tempo real**
