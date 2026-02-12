@@ -10,7 +10,6 @@ keywords = ["trading", "market-microstructure", "orderbook", "analytics", "hft"]
 categories = ["finance", "algorithms"]
 
 [dependencies]
-tokio = { version = "1.40", features = ["full"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 rust_decimal = "1.36"
@@ -18,8 +17,6 @@ rust_decimal_macros = "1.36"
 anyhow = "1.0"
 log = "0.4"
 env_logger = "0.11"
-tungstenite = "0.24"
-ndarray = "0.16"
 
 [[bin]]
 name = "market-analyzer"

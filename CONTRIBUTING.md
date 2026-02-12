@@ -1,6 +1,6 @@
 # Contribuindo para Market Microstructure Analyzer
 
-Obrigado por considerar contribuir com este projeto! 🎉
+Obrigado por considerar contribuir com este projeto!
 
 ## 🚀 Como Contribuir
 
@@ -229,4 +229,4 @@ Ao contribuir, você concorda que suas contribuições serão licenciadas sob a 
 
 ---
 
-**Obrigado por contribuir! 🙏**
+**Obrigado por contribuir!**

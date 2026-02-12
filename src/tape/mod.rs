@@ -18,6 +18,7 @@ pub enum TradeType {
 }
 
 /// Analyze a single trade
+#[must_use]
 pub fn classify_trade(trade: &Trade, block_threshold: Decimal) -> TradeType {
     if trade.quantity >= block_threshold {
         TradeType::Block {
@@ -37,6 +38,7 @@ pub fn classify_trade(trade: &Trade, block_threshold: Decimal) -> TradeType {
 ///
 /// # Returns
 /// (buy_volume, sell_volume, net_volume)
+#[must_use]
 pub fn calculate_trade_pressure(trades: &[Trade]) -> (Decimal, Decimal, Decimal) {
     let buy_volume: Decimal = trades
         .iter()
@@ -63,6 +65,7 @@ pub fn calculate_trade_pressure(trades: &[Trade]) -> (Decimal, Decimal, Decimal)
 ///
 /// # Returns
 /// Vector of block trades
+#[must_use]
 pub fn identify_block_trades(trades: &[Trade], threshold: Decimal) -> Vec<Trade> {
     trades
         .iter()
@@ -81,6 +84,7 @@ pub fn identify_block_trades(trades: &[Trade], threshold: Decimal) -> Vec<Trade>
 ///
 /// # Returns
 /// Aggression ratio between 0.0 and 1.0
+#[must_use]
 pub fn calculate_aggression_ratio(trades: &[Trade]) -> Decimal {
     if trades.is_empty() {
         return dec!(0.5);
@@ -101,6 +105,7 @@ pub fn calculate_aggression_ratio(trades: &[Trade]) -> Decimal {
 ///
 /// # Returns
 /// Vector of cluster start indices
+#[must_use]
 pub fn detect_trade_clusters(
     trades: &[Trade],
     time_window: i64,
@@ -139,6 +144,7 @@ pub fn detect_trade_clusters(
 ///
 /// # Returns
 /// VWAP or None if no trades
+#[must_use]
 pub fn calculate_vwap(trades: &[Trade]) -> Option<Decimal> {
     if trades.is_empty() {
         return None;

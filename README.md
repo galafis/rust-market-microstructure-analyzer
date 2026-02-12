@@ -4,14 +4,8 @@
 
 ![Rust](https://img.shields.io/badge/Rust-1.70+-orange?style=for-the-badge&logo=rust)
 ![License](https://img.shields.io/github/license/galafis/rust-market-microstructure-analyzer?style=for-the-badge)
-![Stars](https://img.shields.io/github/stars/galafis/rust-market-microstructure-analyzer?style=for-the-badge)
 
-**Engine de análise de microestrutura de mercado para order flow e tape reading em tempo real**
-
-✅ **Totalmente testado** - 24 testes unitários  
-✅ **100% funcional** - Todos os módulos implementados  
-✅ **CI/CD configurado** - GitHub Actions  
-✅ **Documentação completa** - API, exemplos, e guias
+Market microstructure analysis engine for order flow and tape reading in Rust.
 
 [Documentação](https://github.com/galafis/rust-market-microstructure-analyzer/tree/main/docs) •
 [Exemplos](https://github.com/galafis/rust-market-microstructure-analyzer/tree/main/examples) •
@@ -118,7 +112,7 @@ O sistema é composto por 5 módulos principais:
    - Detecção de imbalance
    - Análise de profundidade de mercado
    - Best bid/ask e mid price
-   - ✅ **7 testes implementados**
+   - 7 testes
 
 2. **Tape Module** (`src/tape/`) - Processamento de tape reading
    - Análise de fluxo de trades
@@ -126,29 +120,29 @@ O sistema é composto por 5 módulos principais:
    - Cálculo de VWAP
    - Detecção de clusters de trading
    - Ratio de agressão
-   - ✅ **7 testes implementados**
+   - 7 testes
 
 3. **Metrics Module** (`src/metrics/`) - Cálculo de métricas avançadas
    - Volume Profile (POC, VAH, VAL)
    - Delta Volume
    - Cumulative Volume Delta (CVD)
    - Weighted mid price
-   - ✅ **4 testes implementados**
+   - 4 testes
 
 4. **Patterns Module** (`src/patterns/`) - Detecção de padrões
    - Iceberg orders (ordens ocultas)
    - Spoofing (ordens falsas)
    - Support/Resistance levels
    - Absorption (absorção de liquidez)
-   - ✅ **4 testes implementados**
+   - 4 testes
 
 5. **Visualization Module** (`src/visualization/`) - Geração de visualizações
    - Gráficos ASCII de profundidade
    - Print formatado de order book
    - Display de tape reading
-   - ✅ **2 testes implementados**
+   - 2 testes
 
-**Total: 24 testes unitários cobrindo toda a funcionalidade core** ✅
+**Total: 24 testes unitários**
 
 ---
 
@@ -362,16 +356,16 @@ Mede o desequilíbrio entre compradores e vendedores:
 
 ### Otimizações
 
-- ✅ Estruturas de dados eficientes (BTreeMap para order book)
-- ✅ Cálculos incrementais (não recalcula tudo)
-- ✅ Zero-copy quando possível
-- ✅ Compilação otimizada com LTO
+- Estruturas de dados eficientes (BTreeMap para order book)
+- Cálculos incrementais
+- Zero-copy quando possível
+- Compilação otimizada com LTO
 
 ---
 
 ## 🧪 Testes
 
-Este projeto possui uma cobertura de testes abrangente com **24 testes unitários** validando toda a funcionalidade core.
+O projeto inclui 24 testes unitários cobrindo os módulos principais.
 
 ### Executar Testes
 
@@ -420,14 +414,6 @@ tests/
     └── Empty order book handling
 ```
 
-### CI/CD
-
-O projeto utiliza GitHub Actions para integração contínua:
-- ✅ Execução automática de testes
-- ✅ Verificação de build
-- ✅ Linting com Clippy
-- ✅ Formatação com Rustfmt
-
 ---
 
 ## 🤝 Contribuindo
@@ -455,11 +441,10 @@ Contribuições são bem-vindas! Para contribuir:
 - [x] Análise básica de order book
 - [x] Cálculo de spread e imbalance
 - [x] Tape reading básico
-- [x] **Testes unitários completos (24 testes)**
-- [x] **CI/CD com GitHub Actions**
-- [x] **Detecção de padrões (iceberg, spoofing, support/resistance)**
-- [x] **Métricas avançadas (CVD, delta, volume profile, VWAP)**
-- [x] **Visualização ASCII de order book**
+- [x] Testes unitários (24 testes)
+- [x] Detecção de padrões (iceberg, spoofing, support/resistance)
+- [x] Métricas avançadas (CVD, delta, volume profile, VWAP)
+- [x] Visualização ASCII de order book
 - [ ] WebSocket feed em tempo real
 - [ ] Machine Learning para detecção de padrões
 - [ ] Dashboard web interativo
@@ -488,10 +473,4 @@ Formação: Análise e Desenvolvimento de Sistemas, Gestão de TI, Segurança Ci
 
 ---
 
-<div align="center">
 
-**⭐ Se este projeto foi útil, considere dar uma estrela!**
-
-Made with ❤️ and Rust 🦀
-
-</div>

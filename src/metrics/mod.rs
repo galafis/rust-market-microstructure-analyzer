@@ -28,6 +28,7 @@ pub struct VolumeProfile {
 ///
 /// # Returns
 /// VolumeProfile structure with POC, VAH, VAL
+#[must_use]
 pub fn calculate_volume_profile(trades: &[Trade], tick_size: Decimal) -> VolumeProfile {
     let mut levels: HashMap<Decimal, Decimal> = HashMap::new();
 
@@ -56,30 +57,26 @@ pub fn calculate_volume_profile(trades: &[Trade], tick_size: Decimal) -> VolumeP
     let total_volume: Decimal = levels.values().sum();
     let value_area_volume = total_volume * dec!(0.70);
 
-    // Sort levels by price
-    let mut sorted_levels: Vec<_> = levels.iter().collect();
-    sorted_levels.sort_by_key(|(&price, _)| price);
+    // Sort levels by volume descending to build value area from highest-volume levels
+    let mut sorted_by_volume: Vec<_> = levels.iter().collect();
+    sorted_by_volume.sort_by(|a, b| b.1.cmp(a.1));
 
-    // Find VAH and VAL (simplified - around POC)
+    // Find VAH and VAL by accumulating highest-volume price levels until 70% is reached
     let (vah, val) = if let Some(poc_price) = poc {
         let mut accumulated = dec!(0);
         let mut low = poc_price;
         let mut high = poc_price;
 
-        for (&price, &volume) in &levels {
+        for (&price, &volume) in &sorted_by_volume {
             if accumulated >= value_area_volume {
                 break;
             }
-            if (price - poc_price).abs() <= (high - poc_price).abs()
-                || (price - poc_price).abs() <= (poc_price - low).abs()
-            {
-                accumulated += volume;
-                if price > high {
-                    high = price;
-                }
-                if price < low {
-                    low = price;
-                }
+            accumulated += volume;
+            if price > high {
+                high = price;
+            }
+            if price < low {
+                low = price;
             }
         }
         (Some(high), Some(low))
@@ -102,6 +99,7 @@ pub fn calculate_volume_profile(trades: &[Trade], tick_size: Decimal) -> VolumeP
 ///
 /// # Returns
 /// Net delta (positive = buying pressure, negative = selling pressure)
+#[must_use]
 pub fn calculate_delta(trades: &[Trade]) -> Decimal {
     trades
         .iter()
@@ -122,6 +120,7 @@ pub fn calculate_delta(trades: &[Trade]) -> Decimal {
 ///
 /// # Returns
 /// Vector of (timestamp, cumulative_delta) pairs
+#[must_use]
 pub fn calculate_cvd(trades: &[Trade]) -> Vec<(i64, Decimal)> {
     let mut cvd = dec!(0);
     let mut result = Vec::new();
@@ -141,6 +140,7 @@ pub fn calculate_cvd(trades: &[Trade]) -> Vec<(i64, Decimal)> {
 /// Calculate weighted mid price
 ///
 /// Weights the mid price by the volumes at best bid and ask
+#[must_use]
 pub fn weighted_mid_price(orderbook: &OrderBook) -> Option<Decimal> {
     if orderbook.bids.is_empty() || orderbook.asks.is_empty() {
         return None;

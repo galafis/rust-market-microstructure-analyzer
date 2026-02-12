@@ -4,7 +4,14 @@
 //! Currently provides text-based visualization, with plans for graphical output.
 
 use crate::types::{OrderBook, Trade};
+use rust_decimal::prelude::ToPrimitive;
 use rust_decimal::Decimal;
+use std::fmt::Write;
+
+/// Convert a Decimal to a non-negative f64, clamped at 0.0
+fn decimal_to_f64(d: Decimal) -> f64 {
+    d.to_f64().unwrap_or(0.0).max(0.0)
+}
 
 /// Print order book in text format
 pub fn print_orderbook(orderbook: &OrderBook, levels: usize) {
@@ -12,21 +19,21 @@ pub fn print_orderbook(orderbook: &OrderBook, levels: usize) {
     println!("Timestamp: {}", orderbook.timestamp);
     println!("\nAsks (Sell Orders):");
 
-    for ask in orderbook.asks.iter().take(levels) {
-        let bar =
-            "█".repeat((ask.quantity.to_string().parse::<f64>().unwrap_or(0.0) * 2.0) as usize);
-        println!("  ${:<12} | {} {}", ask.price, bar, ask.quantity);
+    // Display asks in reverse order (highest first) for natural book layout
+    for ask in orderbook.asks.iter().take(levels).collect::<Vec<_>>().iter().rev() {
+        let bar_len = (decimal_to_f64(ask.quantity) * 2.0) as usize;
+        let bar = "█".repeat(bar_len);
+        println!("  ${:<12} | {bar} {}", ask.price, ask.quantity);
     }
 
     println!("{}", "─".repeat(50));
 
+    println!("Bids (Buy Orders):");
     for bid in orderbook.bids.iter().take(levels) {
-        let bar =
-            "█".repeat((bid.quantity.to_string().parse::<f64>().unwrap_or(0.0) * 2.0) as usize);
-        println!("  ${:<12} | {} {}", bid.price, bar, bid.quantity);
+        let bar_len = (decimal_to_f64(bid.quantity) * 2.0) as usize;
+        let bar = "█".repeat(bar_len);
+        println!("  ${:<12} | {bar} {}", bid.price, bid.quantity);
     }
-
-    println!("\nBids (Buy Orders):");
 }
 
 /// Print trade tape
@@ -52,12 +59,15 @@ pub fn print_trades(trades: &[Trade], limit: usize) {
 }
 
 /// Generate ASCII chart of order book depth
-pub fn ascii_depth_chart(orderbook: &OrderBook, _height: usize) -> String {
+#[must_use]
+pub fn ascii_depth_chart(orderbook: &OrderBook, depth: usize) -> String {
     let mut output = String::new();
 
     if orderbook.bids.is_empty() && orderbook.asks.is_empty() {
         return "No data".to_string();
     }
+
+    let display_levels = depth.max(1);
 
     // Find max volume for scaling
     let max_bid_qty = orderbook
@@ -75,35 +85,31 @@ pub fn ascii_depth_chart(orderbook: &OrderBook, _height: usize) -> String {
     let max_qty = max_bid_qty.max(max_ask_qty);
 
     output.push_str("Order Book Depth:\n");
-    output.push_str(&format!("Max Volume: {}\n\n", max_qty));
+    let _ = writeln!(output, "Max Volume: {max_qty}\n");
 
     // Simple bar chart
-    for level in orderbook.asks.iter().rev().take(5) {
+    for level in orderbook.asks.iter().rev().take(display_levels) {
         let ratio = if max_qty > Decimal::ZERO {
-            (level.quantity / max_qty)
-                .to_string()
-                .parse::<f64>()
-                .unwrap_or(0.0)
+            decimal_to_f64(level.quantity / max_qty)
         } else {
             0.0
         };
+        #[allow(clippy::cast_possible_truncation, clippy::cast_sign_loss)]
         let bars = ((ratio * 20.0) as usize).max(1);
-        output.push_str(&format!("${:<10} ASK │{}\n", level.price, "▓".repeat(bars)));
+        let _ = writeln!(output, "${:<10} ASK │{}", level.price, "▓".repeat(bars));
     }
 
-    output.push_str(&format!("{}\n", "─".repeat(40)));
+    let _ = writeln!(output, "{}", "─".repeat(40));
 
-    for level in orderbook.bids.iter().take(5) {
+    for level in orderbook.bids.iter().take(display_levels) {
         let ratio = if max_qty > Decimal::ZERO {
-            (level.quantity / max_qty)
-                .to_string()
-                .parse::<f64>()
-                .unwrap_or(0.0)
+            decimal_to_f64(level.quantity / max_qty)
         } else {
             0.0
         };
+        #[allow(clippy::cast_possible_truncation, clippy::cast_sign_loss)]
         let bars = ((ratio * 20.0) as usize).max(1);
-        output.push_str(&format!("${:<10} BID │{}\n", level.price, "▓".repeat(bars)));
+        let _ = writeln!(output, "${:<10} BID │{}", level.price, "▓".repeat(bars));
     }
 
     output

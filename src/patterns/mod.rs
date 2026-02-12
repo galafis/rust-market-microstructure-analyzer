@@ -36,6 +36,7 @@ pub enum Pattern {
 ///
 /// # Returns
 /// Vector of detected iceberg patterns
+#[must_use]
 pub fn detect_iceberg_orders(
     trades: &[Trade],
     min_fills: usize,
@@ -84,6 +85,7 @@ pub fn detect_iceberg_orders(
 ///
 /// # Returns
 /// Vector of potential spoofing patterns
+#[must_use]
 pub fn detect_spoofing(orderbook: &OrderBook, threshold: Decimal) -> Vec<Pattern> {
     let mut patterns = Vec::new();
 
@@ -119,6 +121,7 @@ pub fn detect_spoofing(orderbook: &OrderBook, threshold: Decimal) -> Vec<Pattern
 ///
 /// # Returns
 /// Vector of support/resistance patterns
+#[must_use]
 pub fn detect_support_resistance(orderbook: &OrderBook, threshold: Decimal) -> Vec<Pattern> {
     let mut patterns = Vec::new();
 
@@ -154,6 +157,7 @@ pub fn detect_support_resistance(orderbook: &OrderBook, threshold: Decimal) -> V
 ///
 /// # Returns
 /// Vector of absorption patterns
+#[must_use]
 pub fn detect_absorption(
     trades: &[Trade],
     volume_threshold: Decimal,

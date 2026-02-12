@@ -2,8 +2,7 @@ use anyhow::Result;
 use market_microstructure_analyzer::*;
 use rust_decimal_macros::dec;
 
-#[tokio::main]
-async fn main() -> Result<()> {
+fn main() -> Result<()> {
     env_logger::init();
     println!("╔═══════════════════════════════════════════════════╗");
     println!("║   Market Microstructure Analyzer - Demo          ║");

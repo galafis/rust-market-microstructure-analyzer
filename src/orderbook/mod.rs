@@ -14,6 +14,7 @@ use rust_decimal_macros::dec;
 ///
 /// # Returns
 /// A tuple containing (spread, spread_percentage)
+#[must_use]
 pub fn calculate_spread(orderbook: &OrderBook) -> Option<(Decimal, Decimal)> {
     if orderbook.bids.is_empty() || orderbook.asks.is_empty() {
         return None;
@@ -39,6 +40,7 @@ pub fn calculate_spread(orderbook: &OrderBook) -> Option<(Decimal, Decimal)> {
 ///
 /// # Returns
 /// The imbalance ratio between -1.0 and 1.0
+#[must_use]
 pub fn calculate_imbalance(orderbook: &OrderBook, depth: Option<usize>) -> Decimal {
     let depth = depth.unwrap_or(usize::MAX);
 
@@ -55,16 +57,19 @@ pub fn calculate_imbalance(orderbook: &OrderBook, depth: Option<usize>) -> Decim
 }
 
 /// Get the best bid price
+#[must_use]
 pub fn best_bid(orderbook: &OrderBook) -> Option<Decimal> {
     orderbook.bids.first().map(|l| l.price)
 }
 
 /// Get the best ask price
+#[must_use]
 pub fn best_ask(orderbook: &OrderBook) -> Option<Decimal> {
     orderbook.asks.first().map(|l| l.price)
 }
 
 /// Get the mid price (average of best bid and ask)
+#[must_use]
 pub fn mid_price(orderbook: &OrderBook) -> Option<Decimal> {
     match (best_bid(orderbook), best_ask(orderbook)) {
         (Some(bid), Some(ask)) => Some((bid + ask) / dec!(2)),
@@ -73,6 +78,7 @@ pub fn mid_price(orderbook: &OrderBook) -> Option<Decimal> {
 }
 
 /// Calculate total volume at a specific depth
+#[must_use]
 pub fn total_volume(levels: &[Level], depth: Option<usize>) -> Decimal {
     let depth = depth.unwrap_or(usize::MAX);
     levels.iter().take(depth).map(|l| l.quantity).sum()
